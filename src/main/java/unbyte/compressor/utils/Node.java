@@ -2,10 +2,10 @@ package unbyte.compressor.utils;
 
 public class Node implements Comparable<Node>{
 	private float value;
-	private char key;
+	private int key;
 	private String prefix;
 	
-	public char getKey() {
+	public int getKey() {
 		return key;
 	}
 
@@ -16,32 +16,30 @@ public class Node implements Comparable<Node>{
 	private Node left;
 	private Node right;
 	
-	public Node(char key, float value, Node right, Node left) {
-		initialisation(key, value, right, left);
+	public Node(int key2, float value, Node right, Node left) {
+		initialisation(key2, value, right, left);
 	}
 	
 	public Node(float value, Node right, Node left) {
 		initialisation(' ', value, right, left);
 	}
 	
-	private void initialisation(char key, float value, Node right, Node left) {
+	private void initialisation(int key2, float value, Node right, Node left) {
 		this.prefix = "";
-		this.key = key;
+		this.key = key2;
 		this.value = value;
-		this.right = right;
-		if(right!=null)	this.right.setPrefix(right.getPrefix()+"0"); // 0 + prefix
+		this.right = right;		
 		this.left = left;
-		if(left!=null) this.left.setPrefix(left.getPrefix()+"1");
 	}
 	
 	public String getPrefix() {
 		return prefix;
 	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-		if(right!=null)	this.right.setPrefix(prefix+"0");
-		if(left!=null) this.left.setPrefix(prefix+"1");
+	public void updatePrefix(String pre, boolean value) {
+		prefix =pre + (value?"1":"0");
+		if(right!=null)	right.updatePrefix(prefix, false);
+		if(left!=null) left.updatePrefix(prefix, true);
 	}
 
 	public float getValue() {
@@ -77,7 +75,6 @@ public class Node implements Comparable<Node>{
 	}
 	
 	public String toString() {
-		return "["+((this.isLeaf())?key+":":"")+value+"-"+prefix+"-"+
-				"(\n	"+left+",\n	"+right+")]";
+		return "\n["+((this.isLeaf())?key+":(leaf)":"")+prefix+"(\n	"+left+",\n	"+right+"\n)]";
 	}
 }
