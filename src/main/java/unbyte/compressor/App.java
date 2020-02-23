@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.BitSet;
 
 /**
  * Hello world!
@@ -16,14 +17,13 @@ public class App
 	public static void main( String[] args ) throws IOException
 	{
 
-		
 		try {
 			InputStream inputStream = new FileInputStream("test.txt");
 			InputStream stream = new BufferedInputStream(inputStream);
 			
-			Huffman man = new Huffman();
-			man.compress(stream,"result");
-
+			Compressor man = new HuffmanCompressor();
+			man.compress(stream,"result_____");
+			man.decompress(stream,"res");
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block FileNotFoundException
