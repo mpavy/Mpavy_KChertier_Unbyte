@@ -3,3 +3,5 @@ jdk: openjdk11
 sudo: false
 script: mvn -Dsurefire.useFile=false test
 dist: trusty
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t 74349ff5-c626-4a38-b9f6-48faa5e1ffa2
