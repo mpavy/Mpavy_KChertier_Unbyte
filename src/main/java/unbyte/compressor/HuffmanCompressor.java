@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.PriorityQueue;
 
 import unbyte.compressor.Compressor;
@@ -123,7 +124,7 @@ public class HuffmanCompressor implements Compressor{
 		return Integer.toBinaryString(b);
 	}
 	
-	private String getCompressed(String[] codage, byte[] stb) {
+	public String getCompressed(String[] codage, byte[] stb) {
 		String result = "";
 		for(byte b : stb) {
 			result+=codage[b];
@@ -131,7 +132,7 @@ public class HuffmanCompressor implements Compressor{
 		return result;
 	}
 
-	private String[] getCodage(Node root) {
+	public String[] getCodage(Node root) {
 		// TODO Auto-generated method stub
 		HashMap<Character,String> map = new HashMap<>();
 		map.putAll(getCodageRecu("1",root.left));
@@ -158,19 +159,19 @@ public class HuffmanCompressor implements Compressor{
 		return map;
 	}
 
-	private Node getTree(PriorityQueue<Node> nodes) {
+	public Node getTree(PriorityQueue<Node> nodes) {
 		while(nodes.size()>1) {
 			Node left = nodes.poll();
 			Node right = nodes.poll();
 			Node node = new Node(left, right);
 			node.probability = left.probability+right.probability;
-			nodes.add(node); 
+			nodes.add(node);
 		}
 		
 		return nodes.poll();
 	}
 
-	private int[] getEffectif(byte[] stream) {
+	public int[] getEffectif(byte[] stream) {
 		int[] effectif = new int[256];
 		for(byte b : stream){
 			effectif[b]++;
@@ -179,12 +180,12 @@ public class HuffmanCompressor implements Compressor{
 		return effectif;
 	}
 
-	private PriorityQueue<Node> getNodeQueue(int[] effectif) {
-		PriorityQueue<Node> nodes = new PriorityQueue<HuffmanCompressor.Node>(effectifTotal ,new NodeComparator());
+	public PriorityQueue<Node> getNodeQueue(int[] effectif) {
+		PriorityQueue<Node> nodes = new PriorityQueue<HuffmanCompressor.Node>(effectifTotal , new NodeComparator());
 
 		for(int i=0;i<effectif.length;i++) {
 			if((effectif[i]!=0)) {
-				Node node = new Node((char)i,(effectif[i]+0f)/effectifTotal,null,null);
+				Node node = new Node((char) i, (effectif[i] + 0f) / effectifTotal, null, null);
 				nodes.add(node);
 			}
 		}
@@ -192,7 +193,7 @@ public class HuffmanCompressor implements Compressor{
 		return nodes;
 	}
 
-	private class Node {
+	public static class Node {
 		private char character;
 		private float probability;
 		private Node left;
@@ -214,14 +215,31 @@ public class HuffmanCompressor implements Compressor{
 			return (right == null && left == null);
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Node node = (Node) o;
+			return character == node.character &&
+					Float.compare(node.probability, probability) == 0 &&
+					Objects.equals(left, node.left) &&
+					Objects.equals(right, node.right);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(character, probability, left, right);
+		}
+
+		@Override
 		public String toString() {
 			return "["+((character!=0)?character:"")+" : "+probability
 					+(!isLeaf()? "\n(\n"+left+",\n"+right+"\n)\n":"")
 							+ "]" ;
 		}
 	}
-	private class NodeComparator implements Comparator<Node>{
-		public int compare(Node a, Node b) {
+	public static class NodeComparator implements Comparator<HuffmanCompressor.Node>{
+		public int compare(HuffmanCompressor.Node a, HuffmanCompressor.Node b) {
 			return ((Float)a.probability).compareTo(b.probability);
 		}
 	}
