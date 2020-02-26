@@ -18,12 +18,21 @@ public class App
 	{
 
 		try {
-			InputStream inputStream = new FileInputStream("test.txt");
+			InputStream inputStream = new FileInputStream("testToCompress.txt");
 			InputStream stream = new BufferedInputStream(inputStream);
 			
-			Compressor man = new HuffmanCompressor();
-			man.compress(stream,"result_____");
-			man.decompress(stream,"res");
+//			Compressor man = new HuffmanCompressor();
+//			man.compress(stream,"result");
+//			man.decompress(stream,"res");
+			
+			Compressor lzw = new LZWCompressor();
+			lzw.compress(stream, "test");
+			
+			
+			InputStream toDecompress = new FileInputStream("test.lzw");
+			InputStream streamDecompress = new BufferedInputStream(toDecompress);
+			
+			lzw.decompress(streamDecompress, "uncompressed");
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block FileNotFoundException

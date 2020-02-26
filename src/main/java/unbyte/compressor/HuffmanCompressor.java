@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 import unbyte.compressor.Compressor;
-import unbyte.compressor.utils.Node;
-import unbyte.compressor.utils.NodeComparator;
 
 public class HuffmanCompressor implements Compressor{
 
@@ -18,23 +16,30 @@ public class HuffmanCompressor implements Compressor{
 	public void decompress(InputStream stream, String filename) throws IOException {
 		// TODO Auto-generated method stub
 		// Lire le stream
-		byte[] stb = stream.readAllBytes();
+		byte[] input = stream.readAllBytes();
 		//on suppose qu'on a une chaine de 0 et de 1.
-		
+		String translated = translateStream(input);
 		
 		// En extraire une map 
 		
-		//on suppose qu'on a le string avec les données à décompresser, et une map avec les codes.
-		String str = "1001001101000010010000111101100011000011001111110000111111011111100110011111110100011000011011111011101001111111000\n";
+		//on suppose qu'on a une map avec les codes.		
 		HashMap<String, Character> decoder = new HashMap<>();
-		
 		for(char c : map.keySet()) {
 			decoder.put(map.get(c),c);
 		}
 		
-		String decoded = decodeFromMap(decoder,str);
+		//on décode le message
+		String decoded = decodeFromMap(decoder,translated);
 		System.out.println(decoded);		
 		
+	}
+
+	private String translateStream(byte[] input) {
+		String result = "";
+		for(byte b : input) {
+			result += Integer.toBinaryString(b);
+		}
+		return result;
 	}
 
 	private String decodeFromMap(HashMap<String, Character> map, String str) {
