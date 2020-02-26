@@ -2,6 +2,7 @@ package unbyte.compressor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Objects;
@@ -243,9 +244,9 @@ public class HuffmanCompressor implements Compressor{
 							+ "]" ;
 		}
 	}
-	public static class NodeComparator implements Comparator<HuffmanCompressor.Node>{
+	public static class NodeComparator implements Comparator<HuffmanCompressor.Node>, Serializable {
 		public int compare(HuffmanCompressor.Node a, HuffmanCompressor.Node b) {
-			return ((Float)a.probability).compareTo(b.probability);
+			return Float.compare(a.probability, b.probability);
 		}
 	}
 

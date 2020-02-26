@@ -96,24 +96,23 @@ public class LZWCompressor implements Compressor{
 	private void printCompressedToFile(String result, String outputFileName) throws IOException {
 		byte buffer = 0;
 		File file = new File(outputFileName+".lzw");
-			FileOutputStream out = new FileOutputStream(file);
+		try (FileOutputStream out = new FileOutputStream(file)) {
 			int i = 0;
-			for(char c : result.toCharArray()) {
-				if(c == '0') {
-					buffer =  (byte) (buffer << 1);
-				}else {
-					buffer =  (byte) (buffer +1);
+			for (char c : result.toCharArray()) {
+				if (c == '0') {
+					buffer = (byte) (buffer << 1);
+				} else {
+					buffer = (byte) (buffer + 1);
 				}
-				
-				if(i==7) {
+
+				if (i == 7) {
 					out.write(buffer);
 					buffer = 0;
-					i=0;
+					i = 0;
 				}
 				i++;
 			}
-			out.close();
-			
+		}
 	}
 
 
