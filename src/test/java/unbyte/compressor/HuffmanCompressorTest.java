@@ -3,6 +3,10 @@ package unbyte.compressor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.PriorityQueue;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -15,50 +19,62 @@ public class HuffmanCompressorTest {
     private  int[] effectif;
 
     @Before
-    public void init() {
+    public void init() throws IOException {
+        String string = "0B/ ";
+        InputStream input = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
         huffman = new HuffmanCompressor();
-        stream = new byte[]{0, 1, 0, 1, 1}; // TODO change those values
+        stream = input.readAllBytes();
         effectif = huffman.getEffectif(stream);
     }
 
     @Test
     public void getEffectifTest(){
         int[] result = new int[256];
-        result[0] = 2;
-        result[1] = 3;
-        assertArrayEquals(effectif, result);
-        assertEquals(huffman.effectifTotal, 5);
+        result[48] = 1;
+        result[66] = 1;
+        result[47] = 1;
+        result[32] = 1;
+        assertArrayEquals(result, effectif);
+        assertEquals(4, huffman.effectifTotal);
     }
 
     @Test
     public void getNodeQueueTest(){
         int[] effectif0 = new int[0];
-        assertEquals(huffman.getNodeQueue(effectif0).size(), 0);
+        assertEquals(0,huffman.getNodeQueue(effectif0).size());
         PriorityQueue<HuffmanCompressor.Node> nodes = huffman.getNodeQueue(effectif);
-        assertEquals(nodes.size(), 2);
+        assertEquals(4, nodes.size());
         HuffmanCompressor.Node node = nodes.poll();
-        assertEquals(node, new HuffmanCompressor.Node((char) 0, 0.4f, null, null));
+        assertEquals(new HuffmanCompressor.Node((char)32, 1/4f, null, null), node);
     }
 
     @Test
     public void getTreeTest(){
         PriorityQueue<HuffmanCompressor.Node> nodes = huffman.getNodeQueue(effectif);
-        HuffmanCompressor.Node left = nodes.poll();
-        HuffmanCompressor.Node right = nodes.poll();
-        assertEquals(huffman.getTree(huffman.getNodeQueue(effectif)), new HuffmanCompressor.Node((char)0, 1f, left, right));
+        HuffmanCompressor.Node left1 = nodes.poll();
+        HuffmanCompressor.Node right1 = nodes.poll();
+        HuffmanCompressor.Node node1 = new HuffmanCompressor.Node((char)0, 1/2f, left1, right1);
+        HuffmanCompressor.Node left2 = nodes.poll();
+        HuffmanCompressor.Node right2 = nodes.poll();
+        HuffmanCompressor.Node node2 = new HuffmanCompressor.Node((char)0, 1/2f, left2, right2);
+        HuffmanCompressor.Node node3 = new HuffmanCompressor.Node((char)0, 1f, node1, node2);
+        assertEquals(node3, huffman.getTree(huffman.getNodeQueue(effectif)));
     }
 
     @Test
     public void getCodageTest(){
         String[] codage = new String[256];
-        codage[0] = "0";
-        codage[1] = "1";
-        assertEquals(huffman.getCodage(huffman.getTree(huffman.getNodeQueue(effectif))), codage);
+        codage[48] = "10";
+        codage[66] = "01";
+        codage[47] = "11";
+        codage[32] = "00";
+        assertEquals(codage, huffman.getCodage(huffman.getTree(huffman.getNodeQueue(effectif))));
     }
 
     @Test
     public void getCompressedTest(){
         HuffmanCompressor.Node root = huffman.getTree(huffman.getNodeQueue(effectif));
-        assertEquals(huffman.getCompressed(huffman.getCodage(root), stream), "01011");
+        assertEquals("10011100", huffman.getCompressed(huffman.getCodage(root), stream));
     }
+
 }

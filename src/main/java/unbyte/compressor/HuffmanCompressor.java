@@ -191,7 +191,7 @@ public class HuffmanCompressor implements Compressor{
 
 		for(int i=0;i<effectif.length;i++) {
 			if((effectif[i]!=0)) {
-				Node node = new Node((char) i, (effectif[i] + 0f) / effectifTotal, null, null);
+				Node node = new Node((char) i, (float)effectif[i] / effectifTotal, null, null);
 				nodes.add(node);
 			}
 		}
