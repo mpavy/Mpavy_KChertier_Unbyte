@@ -1,0 +1,7 @@
+<FindBugsFilter>
+    <Match>
+        <Bug pattern="URF_UNREAD_FIELD" />
+        <Class name="unbyte.compressor.App"/>
+        <Field name="helpRequested"/>
+    </Match>
+</FindBugsFilter>
