@@ -3,6 +3,7 @@ package unbyte.compressor;
 import picocli.CommandLine;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 /**

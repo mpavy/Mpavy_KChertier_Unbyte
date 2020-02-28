@@ -77,4 +77,21 @@ public class HuffmanCompressorTest {
         assertEquals("10011100", huffman.getCompressed(huffman.getCodage(root), stream));
     }
 
+    @Test
+    public void translateStreamTest() {
+        System.out.println(huffman.translateStream(stream));
+        assertEquals(huffman.translateStream(stream), "1100001000010101111100000");
+    }
+
+    @Test
+    public void getByteFromCodeTest() {
+        assertEquals(13, huffman.getByteFromCode("1101"));
+    }
+
+    @Test
+    public void getCodeFromByte(){
+        assertEquals("1101", huffman.getCodeFromByte((byte)13));
+    }
+
+
 }
