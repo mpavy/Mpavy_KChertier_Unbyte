@@ -5,10 +5,8 @@ import picocli.CommandLine;
 import java.io.*;
 import java.util.concurrent.Callable;
 
-/**
- * Hello world!
- *
- */
+@CommandLine.Command(name = "Mpavy_KChertier_Unbyte",
+		description = "Compress or decompress files using Huffman or LZW algorithms")
 public class App implements Callable<Integer>
 {
 

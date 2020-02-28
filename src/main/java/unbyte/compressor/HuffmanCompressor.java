@@ -32,25 +32,25 @@ public class HuffmanCompressor implements Compressor{
 		
 		//on décode le message
 		String decoded = decodeFromMap(decoder,translated);
-		System.out.println(decoded);		
+		System.out.println(decoded);
 		
 	}
 
-	private String translateStream(byte[] input) {
-		String result = "";
+	public String translateStream(byte[] input) {
+		StringBuilder result = new StringBuilder();
 		for(byte b : input) {
-			result += Integer.toBinaryString(b);
+			result.append(Integer.toBinaryString(b));
 		}
-		return result;
+		return result.toString();
 	}
 
 	private String decodeFromMap(HashMap<String, Character> map, String str) {
 		String buffer = "";
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		while(str.length()>0) {
 			//System.out.println(buffer + " --- " + result);
 			if(map.containsKey(buffer)) {
-				result+=map.get(buffer);
+				result.append(map.get(buffer));
 				buffer="";
 			}else {
 				buffer+=str.charAt(0);
@@ -61,7 +61,7 @@ public class HuffmanCompressor implements Compressor{
 		}
 	//	System.out.println(result);
 		// TODO Auto-generated method stub
-		return result;
+		return result.toString();
 	}
 
 	int effectifTotal;
@@ -70,11 +70,11 @@ public class HuffmanCompressor implements Compressor{
 	public void compress(InputStream stream, String outputFileName) throws IOException {
 		byte[] stb = stream.readAllBytes();
 		//Lire le stream, en extraire l'effectif de chaque caractères.
-		int effectif[] = getEffectif(stb);
+		int[] effectif = getEffectif(stb);
 
 		//transformer cet effectif en probabilité, construire un Noeud et le ranger dans une file de priorité
 		PriorityQueue<Node> nodes = getNodeQueue(effectif);
-		System.out.println(nodes);
+		//System.out.println(nodes);
 		//Construire un arbre avec la file : en prendre deux dans la file, les combiner en tant que fils d'un nouveau noeud (probabilité sommées) 
 		//et remettre celui-ci dans la file.
 		//le noeud restant dans la liste est la racine.
@@ -84,8 +84,9 @@ public class HuffmanCompressor implements Compressor{
 		String[] codage = getCodage(root);
 		
 		//enfin, parcourir de nouveau le stream d'entrée, pour convertir chaque caractère.
-		String result = getCompressed(codage, stb);
-		
+		String result =
+				getCompressed(codage, stb);
+
 		//résultat sous forme de chaîne
 		System.out.println(result);
 		
@@ -99,7 +100,7 @@ public class HuffmanCompressor implements Compressor{
 		
 	}
 
-	private byte[] getTreeTable(String[] codage) {
+	public byte[] getTreeTable(String[] codage) {
 		int nb = 1;
 		byte[] array = new byte[513];
 		int i=0;
@@ -115,7 +116,7 @@ public class HuffmanCompressor implements Compressor{
 		return array;
 	}
 
-	private byte getByteFromCode(String code) {
+	public byte getByteFromCode(String code) {
 		byte b = 0;
 		for(char c : code.toCharArray()) {
 			b*=2;
@@ -126,16 +127,16 @@ public class HuffmanCompressor implements Compressor{
 		return b;
 	}
 	
-	private String getCodeFromByte(byte b) {
+	public String getCodeFromByte(byte b) {
 		return Integer.toBinaryString(b);
 	}
 	
 	public String getCompressed(String[] codage, byte[] stb) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for(byte b : stb) {
-			result+=codage[b];
+			result.append(codage[b]);
 		}
-		return result;
+		return result.toString();
 	}
 
 	public String[] getCodage(Node root) {
@@ -170,7 +171,7 @@ public class HuffmanCompressor implements Compressor{
 			Node left = nodes.poll();
 			Node right = nodes.poll();
 			Node node = new Node(left, right);
-			node.probability = left.probability+right.probability;
+			node.probability = left.probability+ (right != null ? right.probability : 0);
 			nodes.add(node);
 		}
 		
