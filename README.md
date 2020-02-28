@@ -24,7 +24,25 @@
 
 #### Development process
 
+The development process was separated in two phases:
+ First, we had to understand the theory behind each algorithm, decompose them into steps.
+ Then, we had to actually write code, and test.
+ 
+While understanding the algorithms looks complicated, they are mostly straight forward once cut into simpler steps.
+As an example, LZW's algorithm can be separated into a few steps :
+ - Construct a map of every character and its associated code
+ - Go through the file and find the longest prefix not in the map
+ - Add the code for the longest prefix in the map to the result
+ - Add an entry for the one not in the map, with the next available code.
+ - repeat until the file is empty
+ 
+ Because of this, the code is build around this separation, each concern has its associated function.
+ 
 #### Difficulties
+
+The most challenging part is working with individual bits. Writing only three bits into a file is not straight forward.
+
+For LZW, we used a workaround by transforming everything into a string of 0 and 1, and iterating over this. It is however not optimal.
 
 ## Tests
 
