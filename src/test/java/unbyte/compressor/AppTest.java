@@ -3,7 +3,6 @@ package unbyte.compressor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -60,14 +59,5 @@ public class AppTest {
         assertFalse(app.compressionIsChosen(false, true));
         assertTrue(app.compressionIsChosen(true, false));
     }
-
-    /*@Test
-    public void callTest() throws IOException {
-        CommandLine commandLine = new CommandLine(app);
-        commandLine.parseArgs("--input", "testToCompress.txt", "-out", "output.txt", "--compress");
-        assertEquals("No available algorithm was indicated, so Huffman is picked by default\n", outContent.toString());
-      new CommandLine(app).parseArgs("--input", "testToCompress.txt", "-out", "output.txt","-algo", "Huffman", "--compress");
-        assertNotEquals("No available algorithm was indicated, so Huffman is picked by default\n", outContent.toString());
-    }*/
 }
 

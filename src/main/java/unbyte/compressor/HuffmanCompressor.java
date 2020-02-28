@@ -16,7 +16,6 @@ public class HuffmanCompressor implements Compressor{
 	
 	@Override
 	public void decompress(InputStream stream, String filename) throws IOException {
-		// TODO Auto-generated method stub
 		// Lire le stream
 		byte[] input = stream.readAllBytes();
 		//on suppose qu'on a une chaine de 0 et de 1.
@@ -59,8 +58,6 @@ public class HuffmanCompressor implements Compressor{
 				}
 			}
 		}
-	//	System.out.println(result);
-		// TODO Auto-generated method stub
 		return result.toString();
 	}
 
@@ -74,12 +71,10 @@ public class HuffmanCompressor implements Compressor{
 
 		//transformer cet effectif en probabilité, construire un Noeud et le ranger dans une file de priorité
 		PriorityQueue<Node> nodes = getNodeQueue(effectif);
-		//System.out.println(nodes);
-		//Construire un arbre avec la file : en prendre deux dans la file, les combiner en tant que fils d'un nouveau noeud (probabilité sommées) 
+		//Construire un arbre avec la file : en prendre deux dans la file, les combiner en tant que fils d'un nouveau noeud (probabilité sommées)
 		//et remettre celui-ci dans la file.
 		//le noeud restant dans la liste est la racine.
 		Node root = getTree(nodes);
-		//System.out.println(root);
 		//parcourir l'arbre pour déterminer le codage de chaque caractères
 		String[] codage = getCodage(root);
 		
@@ -122,7 +117,6 @@ public class HuffmanCompressor implements Compressor{
 	}
 
 	public String[] getCodage(Node root) {
-		// TODO Auto-generated method stub
 		HashMap<Character,String> map = new HashMap<>();
 		map.putAll(getCodageRecu("1",root.left));
 		map.putAll(getCodageRecu("0",root.right));
@@ -133,7 +127,6 @@ public class HuffmanCompressor implements Compressor{
 		
 		//TODO supprimer cette ligne, une fois l'implémentation du décodeur terminée.
 		this.map = map;
-	//	System.out.println(map);
 		return codage;
 	}
 

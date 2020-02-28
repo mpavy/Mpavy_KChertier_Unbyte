@@ -92,6 +92,4 @@ public class HuffmanCompressorTest {
     public void getCodeFromByte(){
         assertEquals("1101", huffman.getCodeFromByte((byte)13));
     }
-
-
 }
