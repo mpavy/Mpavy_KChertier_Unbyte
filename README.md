@@ -44,6 +44,8 @@ The most challenging part is working with individual bits. Writing only three bi
 
 For LZW, we used a workaround by transforming everything into a string of 0 and 1, and iterating over this. It is however not optimal.
 
+As of right now, the Huffman implementation is not completed. Compression is working until when we need to write the tree and code into a file. Decompression is not reading the input file, nor writing the result. It would work if a tree is provided (by modifying the current code).
+
 ## Tests
 
 #### Continuous integration
