@@ -34,12 +34,13 @@ public class LZWCompressor implements Compressor{
 
 
 
-	private void printUncompressedToFile(String result, String outputFileName) throws IOException {
-		File file = new File(outputFileName+".lzw");
-		FileOutputStream out = new FileOutputStream(file);
+	public void printUncompressedToFile(String result, String outputFileName) throws IOException {
+		File file = new File(outputFileName + ".lzw");
+		try (FileOutputStream out = new FileOutputStream(file)) {
 
-		for(char b : result.toCharArray()) {
-			out.write(b);
+			for (char b : result.toCharArray()) {
+				out.write(b);
+			}
 		}
 	}
 
@@ -47,7 +48,7 @@ public class LZWCompressor implements Compressor{
 
 
 
-	private String getNegativeNBit(byte value, int i) {
+	public String getNegativeNBit(byte value, int i) {
 		String result = Integer.toBinaryString(value);
 
 		return result.substring(result.length()-i);
@@ -55,7 +56,7 @@ public class LZWCompressor implements Compressor{
 
 
 
-	private String translate(HashMap<String, String> dictionnaire, String input) {
+	public String translate(HashMap<String, String> dictionnaire, String input) {
 		String result = "";
 		String bitBuffer = "";
 
@@ -120,16 +121,16 @@ public class LZWCompressor implements Compressor{
 		File file = new File(outputFileName+".lzw");
 		try (FileOutputStream out = new FileOutputStream(file)) {
 			int i = 0;
-			for(char c : result.toCharArray()) {
-				if(i==8) {
+			for (char c : result.toCharArray()) {
+				if (i == 8) {
 					out.write(buffer);
 					buffer = 0;
 					i = 0;
 				}
-				if(c == '0') {
-					buffer =  (byte) (buffer << 1);
-				}else {
-					buffer =  (byte) ((buffer <<1 )+1);
+				if (c == '0') {
+					buffer = (byte) (buffer << 1);
+				} else {
+					buffer = (byte) ((buffer << 1) + 1);
 				}
 
 				i++;
