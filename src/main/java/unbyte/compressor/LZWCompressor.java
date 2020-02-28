@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class LZWCompressor implements Compressor{
-	int NB_BIT = 9;
+	int NB_BIT = 12;
 
 	@Override
 	public void decompress(InputStream stream, String outputFileName) throws IOException {
@@ -19,19 +19,13 @@ public class LZWCompressor implements Compressor{
 		String raw = "";
 		byte[] bytes = stream.readAllBytes();
 		
-		//TODO changer pour vraiment lire l'entrée.
-		//TODO correct this :
 		for(byte value : bytes) {
-			raw += Integer.toBinaryString(value);
+			raw += getNBitRepresentation(value,8);
 		}
-		System.out.println("rawed : "+raw);
 		
-		
-		//on suppose qu'on a le stream sous forme de chaine de 0 et de 1.
-		 raw = "001010100001001111001000010001000101001001111001010010001001110001001111001010100100000000100000010100000100100001001100000011100000101100000111";
-		System.out.println("r___d : "+raw);
 		 String result =  translate(dictionnaire,raw);
 		System.out.println("uncompressed : "+result);
+	//	System.out.println(dictionnaire);
 		//TODO print to file
 	}
 
@@ -41,7 +35,6 @@ public class LZWCompressor implements Compressor{
 		String result = "";
 		String bitBuffer = "";
 
-
 		String last = "";
 		int nextEntry = dictionnaire.size();
 		for(char c : input.toCharArray()) {
@@ -50,24 +43,30 @@ public class LZWCompressor implements Compressor{
 			}else {
 				// 	on cherche le code
 				//	on ajoute au dico : "décompressé avant + le premier caractère de ce qui est décompréssé maintenant"
-
-				if(last.length()>0) {
-					dictionnaire.put(getNBitRepresentation(nextEntry, NB_BIT),last + dictionnaire.get(bitBuffer).charAt(0));
-					nextEntry++;
-				}
+				//			
 				if(dictionnaire.containsKey(bitBuffer)) {
+					if(last.length()>0) {
+					//	System.out.println(nextEntry + ":"+getNBitRepresentation(nextEntry, NB_BIT)+":"+last+dictionnaire.get(bitBuffer));
+						dictionnaire.put(getNBitRepresentation(nextEntry, NB_BIT),last + dictionnaire.get(bitBuffer).charAt(0));
+						nextEntry++;
+					}
+				
 					last =  dictionnaire.get(bitBuffer);
 				}
+				
 				result+= last;
 				bitBuffer = ""+c;
 			}
 		}
+
 		//on gère le reste du stream (possiblement incomplet)
+		//completer avec des 0 devant pour avoir NB_BIT, et rechercher.
+
+		while(bitBuffer.length()<NB_BIT) {
+			bitBuffer= "0"+bitBuffer;
+		}
 		if(dictionnaire.containsKey(bitBuffer)) {
 			result +=  dictionnaire.get(bitBuffer);
-		}else {
-			//completer avec des 0 devant pour avoir NB_BIT, et rechercher.
-			//TODO
 		}
 		return result;
 	}
@@ -86,9 +85,9 @@ public class LZWCompressor implements Compressor{
 		byte[] input = stream.readAllBytes();
 
 		String result = transform(dictionnaire, input);
-		
-		printCompressedToFile(result,outputFileName);
 		System.out.println("Compressed form : "+result);
+		printCompressedToFile(result,outputFileName);
+		
 	}
 
 
@@ -98,25 +97,26 @@ public class LZWCompressor implements Compressor{
 		File file = new File(outputFileName+".lzw");
 		try (FileOutputStream out = new FileOutputStream(file)) {
 			int i = 0;
-			for (char c : result.toCharArray()) {
-				if (c == '0') {
-					buffer = (byte) (buffer << 1);
-				} else {
-					buffer = (byte) (buffer + 1);
-				}
-
-				if (i == 7) {
+			for(char c : result.toCharArray()) {
+				if(i==8) {
 					out.write(buffer);
 					buffer = 0;
 					i = 0;
 				}
+				if(c == '0') {
+					buffer =  (byte) (buffer << 1);
+				}else {
+					buffer =  (byte) ((buffer <<1 )+1);
+				}
+				
 				i++;
 			}
 		}
 	}
 
-
-
+	/*
+	 * Methode de compression 
+	 */
 	private String transform(HashMap<String, String> dictionnaire, byte[] input) {
 		String result = "";
 		String buffer = "";
@@ -132,7 +132,7 @@ public class LZWCompressor implements Compressor{
 				dictionnaire.put(buffer, getNBitRepresentation(nextEntry++,NB_BIT));
 				result+=dictionnaire.get(buffer.substring(0,buffer.length()-1));
 				buffer=buffer.substring(buffer.length()-1);
-
+				
 			}
 
 		}
@@ -140,16 +140,26 @@ public class LZWCompressor implements Compressor{
 		if(dictionnaire.containsKey(buffer)) {
 			result+=dictionnaire.get(buffer.substring(0,buffer.length()));
 		}
+		
+	//	System.out.println(dictionnaire);
 		return result;
 	}
 
 
-
-	private String getNBitRepresentation(int value, int nbBit) {
+/*
+ * Cette fonction permet de transformer un entier en sa représentation binaire, préfixée par des zéros pour obtenir une longueur précise.
+ * 
+ * @param value, nbBit
+ * value : entier à transformer
+ * nbBit : taile finale à obtenir
+ */
+	public static String getNBitRepresentation(int value, int nbBit) {
+		
 		String result = Integer.toBinaryString(value);
-		while(result.length()<nbBit) {
-			result = "0"+result;
-		}
+		
+			while(result.length()<nbBit) {
+				result = "0"+result;
+			}
 		return result;
 	}
 
