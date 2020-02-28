@@ -141,7 +141,7 @@ public class LZWCompressor implements Compressor{
 	/*
 	 * Methode de compression 
 	 */
-	private String transform(HashMap<String, String> dictionnaire, byte[] input) {
+	public String transform(HashMap<String, String> dictionnaire, byte[] input) {
 		String result = "";
 		String buffer = "";
 		int nextEntry = dictionnaire.size();
