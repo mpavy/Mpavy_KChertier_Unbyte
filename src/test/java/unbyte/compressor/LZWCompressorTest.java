@@ -63,4 +63,14 @@ public class LZWCompressorTest {
         }
         assertEquals("0000000000110000000011110000000", lzw.translate(dictionnaire, raw));
     }
+
+    @Test
+    public void getCompressDictionnaryTest() {
+        assertEquals(255, lzw.getCompressDictionnary().size());
+    }
+
+    @Test
+    public void getDeompressDictionnaryTest() {
+        assertEquals(255, lzw.getDecompressDictionnary().size());
+    }
 }

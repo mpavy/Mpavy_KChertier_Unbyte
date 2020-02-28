@@ -12,10 +12,7 @@ public class LZWCompressor implements Compressor{
 	@Override
 	public void decompress(InputStream stream, String outputFileName) throws IOException {
 		//initialiser le dictionnaire avec les chaines de longueur 1.
-		HashMap<String,String> dictionnaire = new HashMap<>();
-		for(int i = 1 ; i<256; i++) {
-			dictionnaire.put(getNBitRepresentation(i,NB_BIT), Character.toString((char)i));
-		}
+		HashMap<String,String> dictionnaire = getDecompressDictionnary();
 		String raw = "";
 		byte[] bytes = stream.readAllBytes();
 		//Transformer l'entrée en chaîne de 0 et de 1
@@ -32,6 +29,22 @@ public class LZWCompressor implements Compressor{
 		printUncompressedToFile(result,outputFileName);
 	}
 
+	public HashMap<String,String> getDecompressDictionnary(){
+		HashMap<String,String> dictionnaire = new HashMap<>();
+		for(int i = 1 ; i<256; i++) {
+			dictionnaire.put(getNBitRepresentation(i,NB_BIT), Character.toString((char)i));
+		}
+		return dictionnaire;
+	}
+
+	public HashMap<String,String> getCompressDictionnary(){
+		//initialiser le dictionnaire avec les chaines de longueur 1.
+		HashMap<String,String> dictionnaire = new HashMap<>();
+		for(int i = 1 ; i<256; i++) {
+			dictionnaire.put(Character.toString((char)i), getNBitRepresentation(i,NB_BIT));
+		}
+		return dictionnaire;
+	}
 
 
 	public void printUncompressedToFile(String result, String outputFileName) throws IOException {
@@ -100,18 +113,11 @@ public class LZWCompressor implements Compressor{
 
 	@Override
 	public void compress(InputStream stream, String outputFileName) throws IOException {
-		//initialiser le dictionnaire avec les chaines de longueur 1.
 
-		HashMap<String,String> dictionnaire = new HashMap<>();
-		for(int i = 1 ; i<256; i++) {
-			dictionnaire.put(Character.toString((char)i), getNBitRepresentation(i,NB_BIT));
-		}
-
+		HashMap<String,String> dictionnaire = getCompressDictionnary();
 		byte[] input = stream.readAllBytes();
-
 		String result = transform(dictionnaire, input);
 		printCompressedToFile(result,outputFileName);
-
 	}
 
 

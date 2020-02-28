@@ -95,25 +95,7 @@ public class HuffmanCompressor implements Compressor{
 				
 		//export de l'arbre sous forme : 1 pour un noeud intermédiaire, 0 pour une feuille, suivi du charactère qu'il encode
 	//	String treenodes = "";
-		
-	
-		
-	}
 
-	public byte[] getTreeTable(String[] codage) {
-		int nb = 1;
-		byte[] array = new byte[513];
-		int i=0;
-		while(i< codage.length) {
-			if(codage[i]!=null) {
-				array[nb]=(byte) i;
-				array[nb+1]=getByteFromCode(codage[i]);
-				nb+=2;
-			}
-			i++;
-		}
-		array[0]=(byte) i;
-		return array;
 	}
 
 	public byte getByteFromCode(String code) {
