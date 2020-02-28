@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -79,7 +80,6 @@ public class HuffmanCompressorTest {
 
     @Test
     public void translateStreamTest() {
-        System.out.println(huffman.translateStream(stream));
         assertEquals(huffman.translateStream(stream), "1100001000010101111100000");
     }
 
@@ -91,5 +91,13 @@ public class HuffmanCompressorTest {
     @Test
     public void getCodeFromByte(){
         assertEquals("1101", huffman.getCodeFromByte((byte)13));
+    }
+
+    @Test
+    public void decodeFromMap() {
+        HashMap<String, Character> decoder = new HashMap<>();
+        decoder.put("aa", 'b');
+        decoder.put("bb", 'c');
+        assertEquals("b", huffman.decodeFromMap(decoder, "aabb"));
     }
 }

@@ -87,6 +87,8 @@ Travis Build log will show us the mutation coverage but we have to run Pitest lo
 Mutation testing was interesting as it allowed us to rewrite our code in a better way, by simplifying some parts that had failed to kill mutants. 
 Thanks to mutation results, we also wrote a more complete unit test suite.
 
+The last PIT report is in this repository : PIt_report.html.
+
 #### Process
 - After every build, if the build has failed, an email is send to the person who has pushed on the repository.
 

@@ -43,7 +43,7 @@ public class HuffmanCompressor implements Compressor{
 		return result.toString();
 	}
 
-	private String decodeFromMap(HashMap<String, Character> map, String str) {
+	public String decodeFromMap(HashMap<String, Character> map, String str) {
 		String buffer = "";
 		StringBuilder result = new StringBuilder();
 		while(str.length()>0) {
@@ -81,10 +81,9 @@ public class HuffmanCompressor implements Compressor{
 		//enfin, parcourir de nouveau le stream d'entrée, pour convertir chaque caractère.
 		String result =
 				getCompressed(codage, stb);
-
-		//résultat sous forme de chaîne
 		System.out.println(result);
-		
+		//résultat sous forme de chaîne
+
 		//export de l'arbre sous forme d'une suite de charactère suivi de son codage
 	//	String treetable = getTreeTable(codage);
 				
