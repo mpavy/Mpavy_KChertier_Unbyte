@@ -38,6 +38,8 @@ As an example, LZW's algorithm can be separated into a few steps :
  
  Because of this, the code is build around this separation, each concern has its associated function.
  
+ As for the command line interface, we used picocli. We couldn't make it work in a terminal, however, you can use your IDE of choice and add arguments before execution.
+ 
 #### Difficulties
 
 The most challenging part is working with individual bits. Writing only three bits into a file is not straight forward.
