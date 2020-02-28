@@ -13,20 +13,44 @@ public class LZWCompressor implements Compressor{
 	public void decompress(InputStream stream, String outputFileName) throws IOException {
 		//initialiser le dictionnaire avec les chaines de longueur 1.
 		HashMap<String,String> dictionnaire = new HashMap<>();
-		for(int i = 0 ; i<256; i++) {
+		for(int i = 1 ; i<256; i++) {
 			dictionnaire.put(getNBitRepresentation(i,NB_BIT), Character.toString((char)i));
 		}
 		String raw = "";
 		byte[] bytes = stream.readAllBytes();
-		
+		//Transformer l'entrée en chaîne de 0 et de 1
 		for(byte value : bytes) {
-			raw += getNBitRepresentation(value,8);
+			if(value<0) {
+				raw += getNegativeNBit(value,8);
+			}else {
+				raw+= getNBitRepresentation(value, 8);
+			}
 		}
-		
-		 String result =  translate(dictionnaire,raw);
-		System.out.println("uncompressed : "+result);
-	//	System.out.println(dictionnaire);
-		//TODO print to file
+		//décompresser en utilisant le dictionnaire et l'algo lzw
+		String result =  translate(dictionnaire,raw);
+		//ecrire le résultat dans un fichier
+		printUncompressedToFile(result,outputFileName);
+	}
+
+
+
+	private void printUncompressedToFile(String result, String outputFileName) throws IOException {
+		File file = new File(outputFileName+".lzw");
+		FileOutputStream out = new FileOutputStream(file);
+
+		for(char b : result.toCharArray()) {
+			out.write(b);
+		}
+	}
+
+
+
+
+
+	private String getNegativeNBit(byte value, int i) {
+		String result = Integer.toBinaryString(value);
+
+		return result.substring(result.length()-i);
 	}
 
 
@@ -41,19 +65,19 @@ public class LZWCompressor implements Compressor{
 			if(bitBuffer.length()<NB_BIT) {
 				bitBuffer+=c;
 			}else {
+
 				// 	on cherche le code
 				//	on ajoute au dico : "décompressé avant + le premier caractère de ce qui est décompréssé maintenant"
 				//			
 				if(dictionnaire.containsKey(bitBuffer)) {
 					if(last.length()>0) {
-					//	System.out.println(nextEntry + ":"+getNBitRepresentation(nextEntry, NB_BIT)+":"+last+dictionnaire.get(bitBuffer));
 						dictionnaire.put(getNBitRepresentation(nextEntry, NB_BIT),last + dictionnaire.get(bitBuffer).charAt(0));
 						nextEntry++;
 					}
-				
+
 					last =  dictionnaire.get(bitBuffer);
 				}
-				
+
 				result+= last;
 				bitBuffer = ""+c;
 			}
@@ -78,16 +102,15 @@ public class LZWCompressor implements Compressor{
 		//initialiser le dictionnaire avec les chaines de longueur 1.
 
 		HashMap<String,String> dictionnaire = new HashMap<>();
-		for(int i = 0 ; i<256; i++) {
+		for(int i = 1 ; i<256; i++) {
 			dictionnaire.put(Character.toString((char)i), getNBitRepresentation(i,NB_BIT));
 		}
 
 		byte[] input = stream.readAllBytes();
 
 		String result = transform(dictionnaire, input);
-		System.out.println("Compressed form : "+result);
 		printCompressedToFile(result,outputFileName);
-		
+
 	}
 
 
@@ -108,7 +131,7 @@ public class LZWCompressor implements Compressor{
 				}else {
 					buffer =  (byte) ((buffer <<1 )+1);
 				}
-				
+
 				i++;
 			}
 		}
@@ -132,7 +155,7 @@ public class LZWCompressor implements Compressor{
 				dictionnaire.put(buffer, getNBitRepresentation(nextEntry++,NB_BIT));
 				result+=dictionnaire.get(buffer.substring(0,buffer.length()-1));
 				buffer=buffer.substring(buffer.length()-1);
-				
+
 			}
 
 		}
@@ -140,26 +163,24 @@ public class LZWCompressor implements Compressor{
 		if(dictionnaire.containsKey(buffer)) {
 			result+=dictionnaire.get(buffer.substring(0,buffer.length()));
 		}
-		
-	//	System.out.println(dictionnaire);
 		return result;
 	}
 
 
-/*
- * Cette fonction permet de transformer un entier en sa représentation binaire, préfixée par des zéros pour obtenir une longueur précise.
- * 
- * @param value, nbBit
- * value : entier à transformer
- * nbBit : taile finale à obtenir
- */
+	/*
+	 * Cette fonction permet de transformer un entier en sa représentation binaire, préfixée par des zéros pour obtenir une longueur précise.
+	 * 
+	 * @param value, nbBit
+	 * value : entier à transformer
+	 * nbBit : taile finale à obtenir
+	 */
 	public static String getNBitRepresentation(int value, int nbBit) {
-		
+
 		String result = Integer.toBinaryString(value);
-		
-			while(result.length()<nbBit) {
-				result = "0"+result;
-			}
+
+		while(result.length()<nbBit) {
+			result = "0"+result;
+		}
 		return result;
 	}
 
